@@ -1,0 +1,25 @@
+{
+  "name": "kindred",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Stay connected with your loved ones.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Adw8/kindred.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Adw8/kindred/issues"
+  },
+  "homepage": "https://github.com/Adw8/kindred#readme",
+  "workspaces": [
+    "packages/*"
+  ]
+}
