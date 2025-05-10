@@ -1,21 +1,17 @@
-import { Button } from "@/components/ui/button";
+import { ModeToggle } from "./modeToggle";
 
-interface HomepageHeaderProps {
-  onAddFriendClick: () => void;
-}
-
-const HomepageHeader: React.FC<HomepageHeaderProps> = ({ onAddFriendClick }) => {
+const HomepageHeader = () => {
   return (
-    <div className="ml-5 text-center mt-2">
-      <h1 className="text-5xl font-semibold">
-        Kindred
-      </h1>
-      <p className="card mt-2">
-        Stay closer with your loved ones.
-      </p>
-      <div className="mt-5">
-        <Button variant="outline" onClick={onAddFriendClick}>Add friend</Button>
+    <div className="flex justify-between">
+      <div>
+        <h1 className="text-4xl font-semibold">
+          Kindred
+        </h1>
+        <p className="card mt-2">
+          Stay closer with your loved ones.
+        </p>
       </div>
+      <ModeToggle />
     </div>
   );
 };

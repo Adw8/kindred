@@ -45,18 +45,20 @@ const App = () => {
       </>
     ) : (
       <div className="min-h-screen w-full">
-        <Homepage userId = {userId}/>
-        <div className='flex justify-center mt-10'>
-          <Button
-            className='bg-red-600'
-            onClick={
-              async () => {
-                console.log('Signing out')
-                await supabase.auth.signOut()
-              }
-            }>
-            Sign out
-          </Button>
+        <div className='m-5'>
+          <Homepage userId={userId} />
+          <div className='flex justify-center mt-10'>
+            <Button
+              className='bg-red-600'
+              onClick={
+                async () => {
+                  console.log('Signing out')
+                  await supabase.auth.signOut()
+                }
+              }>
+              Sign out
+            </Button>
+          </div>
         </div>
       </div>
     )
