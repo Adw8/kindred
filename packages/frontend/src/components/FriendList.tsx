@@ -21,7 +21,7 @@ const FriendList: React.FC<FriendListProps> = ({ friends }) => {
           <Card>
             <CardHeader>
               <CardTitle>{friend.name}</CardTitle>
-              <CardDescription>{friend.birthday}</CardDescription>
+              <CardDescription>{new Date(friend.birthday).toLocaleDateString()}</CardDescription>
             </CardHeader>
             <CardContent>
               <p>{friend.info}</p>

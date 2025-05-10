@@ -8,10 +8,14 @@ import { Button } from './components/ui/button'
 
 const App = () => {
   const [session, setSession] = useState<Session | null>(null)
+  const [userId, setUserId] = useState<string>('')
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
+      if (session && session.user.id) {
+        setUserId(session?.user.id);
+      }
     })
     const {
       data: { subscription },
@@ -41,7 +45,7 @@ const App = () => {
       </>
     ) : (
       <div className="min-h-screen w-full">
-        <Homepage />
+        <Homepage userId = {userId}/>
         <div className='flex justify-center mt-10'>
           <Button
             className='bg-red-600'

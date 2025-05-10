@@ -1,5 +1,6 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
+import { addFriendToDatabase, getFriendsForUser } from './utils/db';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -7,10 +8,28 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-app.get('/api/ping', (_req, res) => {
-  res.json({ message: 'pong' });
+async function startServer() {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+startServer();
+
+app.get('/api/friends/:userId', async (req: Request, res: Response) => {
+
+  const friends = await getFriendsForUser(req.params.userId);
+  res.json(friends);
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.post('/api/add-friend', async (req: Request, res: Response) => {
+  const { userId, name, birthday, info } = req.body;
+
+  if (!name || !birthday || !info) {
+    res.status(400).json({ error: 'All fields are required' });
+  }
+
+  await addFriendToDatabase(userId, name, birthday, info);
+
+  res.status(200).json('Friend added successfully!');
 });
