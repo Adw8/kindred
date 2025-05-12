@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import axios from "axios";
 
 import { Friend } from "@/types";
-import HomepageHeader from "@/components/HomepageHeader";
 import AddFriendDialog from "@/components/AddFriendDialog";
 import FriendList from "@/components/FriendList";
 import { Button } from "@/components/ui/button";
@@ -48,7 +47,6 @@ const Homepage: React.FC<HomepageProps> = ({ userId }) => {
   return (
     <>
       <div className='flex flex-col'>
-        <HomepageHeader />
         <div className="mt-5 flex justify-center">
           <Button variant="outline" onClick={() => setOpenDialog(true)}>Add friend</Button>
         </div>

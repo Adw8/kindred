@@ -1,49 +1,26 @@
-import Homepage from './pages/Homepage'
-import { useState, useEffect } from 'react'
-import { Auth } from '@supabase/auth-ui-react'
-import { ThemeSupa } from '@supabase/auth-ui-shared'
-import { Session } from '@supabase/supabase-js'
+import { useEffect, useState } from 'react';
+
 import { supabase } from './lib/supabaseClient'
+import Homepage from './pages/Homepage'
 import { Button } from './components/ui/button'
 
 const App = () => {
-  const [session, setSession] = useState<Session | null>(null)
-  const [userId, setUserId] = useState<string>('')
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      if (session && session.user.id) {
-        setUserId(session?.user.id);
-      }
-    })
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
-    return () => subscription.unsubscribe()
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUserId(session?.user.id ?? null);
+    };
+
+    getSession();
   }, []);
 
+  if (!userId) {
+    return <p>Loading...</p>;
+  }
+
   return (
-    !session ? (
-      <>
-        <div className="flex justify-center items-center min-h-screen">
-          <div className='flex flex-col items-center space-y-4'>
-            <div className='text-3xl font-semibold'>
-              Login
-            </div>
-            <div className="w-[400px]">
-              <Auth
-                supabaseClient={supabase}
-                appearance={{ theme: ThemeSupa }}
-                providers={[]}
-              />
-            </div>
-          </div>
-        </div>
-      </>
-    ) : (
       <div className="min-h-screen w-full">
         <div className='m-5'>
           <Homepage userId={userId} />
@@ -61,7 +38,6 @@ const App = () => {
           </div>
         </div>
       </div>
-    )
   )
 }
 
