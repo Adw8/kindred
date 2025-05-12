@@ -1,7 +1,8 @@
-import Homepage from './pages/Homepage'
-import { supabase } from './lib/supabaseClient'
-import { Button } from './components/ui/button'
 import { useEffect, useState } from 'react';
+
+import { supabase } from './lib/supabaseClient'
+import Homepage from './pages/Homepage'
+import { Button } from './components/ui/button'
 
 const App = () => {
   const [userId, setUserId] = useState<string | null>(null);
