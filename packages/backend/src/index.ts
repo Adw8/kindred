@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
-import { addFriendToDatabase, getFriendsForUser } from './utils/db';
+import { addFriendToDatabase, getFriendDetails, getFriendsForUser } from './utils/db';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -42,3 +42,17 @@ app.post('/api/add-friend', async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Error Adding friend to DB' });
   }
 });
+
+app.get('/api/friend/:userId/:friendId', async (req: Request, res: Response) => {
+  try {
+    const { friendId, userId } = req.params;
+    if (!friendId || !userId) {
+      res.status(500).json({error: 'FriendId and userId are required' })
+    }
+    const friendDetails = await getFriendDetails(friendId, userId);
+    res.json(friendDetails);
+  } catch (error) {
+    console.error('Error fetching friend details:', error);
+    res.status(500).json({ error: 'Failed to fetch friend details' });
+  }
+})

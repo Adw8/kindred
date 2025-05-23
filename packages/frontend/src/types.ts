@@ -3,4 +3,5 @@ export type Friend = {
   name: string;
   birthday: string;
   info: string;
+  last_contacted_at: string,
 };

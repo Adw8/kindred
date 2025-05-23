@@ -2,6 +2,8 @@ import dotenv from 'dotenv';
 import { Client } from 'pg';
 import assert from 'assert';
 
+import { Friend } from '../types';
+
 dotenv.config();
 
 assert(process.env.POSTGRES_USER, 'POSTGRES_USER is not set');
@@ -56,6 +58,28 @@ export const getFriendsForUser = async (userId: string) => {
     console.error('Error fetching friends:', err);
     return [];
   } finally {
+    await client.end();
+  }
+}
+
+export const getFriendDetails = async (friendId: string, userId: string): Promise<Friend | undefined> => {
+  const client = new Client(dbConfig);
+  await client.connect();
+
+  try {
+    const query = `
+      SELECT id, name, birthday, info, last_contacted_at
+      FROM public.friends
+      WHERE id = $1 and user_id = $2
+    `;
+
+    const res = await client.query(query, [friendId, userId])
+    return res.rows[0];
+
+  } catch (err) {
+    console.error('Error fetching friends: ', err);
+  }
+  finally {
     await client.end();
   }
 }
