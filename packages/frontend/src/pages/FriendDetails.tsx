@@ -36,14 +36,27 @@ const FriendDetails = () => {
     getFriendDetails();
   }, [userId, id]);
 
+  const formatDate = (isoString: string): string => {
+    const date = new Date(isoString);
+
+    const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', timeZone: 'Asia/Kolkata' };
+    const formatter = new Intl.DateTimeFormat('en-IN', options);
+
+    const formattedDate = formatter.format(date);
+    return formattedDate;
+  }
+
   return (
     <>
       {friendDetails ? (
         <div className="grid grid-cols-4 gap-4 min-h-screen">
           <div className="col-span-2 col-start-2 flex-col">
             <div className='text-4xl text-center font-normal'>{friendDetails.name}</div>
-            <div className='text-1xl text-center font-light m-2'>
-              {friendDetails.info}
+            <div className='text-center m-2'>
+              Wish them on {formatDate(friendDetails.birthday)}
+            </div>
+            <div className='text-1xl text-center font-light m-20'>
+                {friendDetails.info}
             </div>
           </div>
         </div>
