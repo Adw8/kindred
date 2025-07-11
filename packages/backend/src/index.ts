@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
-import { addFriendToDatabase, getFriendDetails, getFriendsForUser } from './utils/db';
+import { addFriendToDatabase, getFriendDetails, getFriendsForUser, updateFriendInfo, deleteFriend } from './utils/db';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -56,3 +56,50 @@ app.get('/api/friend/:userId/:friendId', async (req: Request, res: Response) => 
     res.status(500).json({ error: 'Failed to fetch friend details' });
   }
 })
+
+app.put('/api/friend/:userId/:friendId', async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { friendId, userId } = req.params;
+    const { info } = req.body;
+
+    if (!friendId || !userId) {
+      return res.status(400).json({ error: 'FriendId and userId are required' });
+    }
+
+    if (!info) {
+      return res.status(400).json({ error: 'Info field is required' });
+    }
+
+    const updatedFriend = await updateFriendInfo(friendId, userId, info);
+
+    if (!updatedFriend) {
+      return res.status(404).json({ error: 'Friend not found' });
+    }
+
+    return res.json(updatedFriend);
+  } catch (error) {
+    console.error('Error updating friend info:', error);
+    return res.status(500).json({ error: 'Failed to update friend info' });
+  }
+});
+
+app.delete('/api/friend/:userId/:friendId', async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { friendId, userId } = req.params;
+
+    if (!friendId || !userId) {
+      return res.status(400).json({ error: 'FriendId and userId are required' });
+    }
+
+    const deleted = await deleteFriend(friendId, userId);
+
+    if (!deleted) {
+      return res.status(404).json({ error: 'Friend not found' });
+    }
+
+    return res.json({ message: 'Friend deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting friend:', error);
+    return res.status(500).json({ error: 'Failed to delete friend' });
+  }
+});

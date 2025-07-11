@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 
 import { Friend } from '@/types';
 import { supabase } from '@/lib/supabaseClient';
+import EditableCard from '@/components/ui/EditableCard';
 
 const FriendDetails = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -46,17 +47,42 @@ const FriendDetails = () => {
     return formattedDate;
   }
 
+  const handleSaveInfo = async (newInfo: string) => {
+    if (!userId || !id) return;
+
+    try {
+      const response = await axios.put(`${BACKEND_URL}/friend/${userId}/${id}`, {
+        info: newInfo
+      });
+
+      // Update the local state with the new friend details
+      setFriendDetails(response.data);
+    } catch (err) {
+      console.error('Failed to update friend info', err);
+      throw err; // Re-throw to let EditableCard handle the error
+    }
+  };
+
   return (
     <>
       {friendDetails ? (
         <div className="grid grid-cols-4 gap-4 min-h-screen">
           <div className="col-span-2 col-start-2 flex-col">
             <div className='text-4xl text-center font-normal'>{friendDetails.name}</div>
-            <div className='text-center m-2'>
-              Wish them on {formatDate(friendDetails.birthday)}
+            <div className='text-center m-2 font-normal'>
+              🎂 {formatDate(friendDetails.birthday)}
             </div>
-            <div className='text-1xl text-center font-light m-20'>
-                {friendDetails.info}
+            <div className='text-center m-2 font-normal'>
+              Last Contacted: {formatDate(friendDetails.last_contacted_at)}
+            </div>
+            <div className='text-1xl text-center font-normal m-20'>
+              <div className='text-1xl text-left ml-2'>
+                About
+              </div>
+              <EditableCard
+                input={friendDetails.info}
+                onSave={handleSaveInfo}
+              />
             </div>
           </div>
         </div>

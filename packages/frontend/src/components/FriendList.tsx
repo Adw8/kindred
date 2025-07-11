@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 import { Friend } from "@/types";
 import {
@@ -13,10 +14,29 @@ import { Button } from "@/components/ui/button";
 
 interface FriendListProps {
   friends: Friend[];
+  onFriendDeleted: (deletedFriendId: number) => void;
+  userId: string;
 }
 
-const FriendList: React.FC<FriendListProps> = ({ friends }) => {
+const FriendList: React.FC<FriendListProps> = ({ friends, onFriendDeleted, userId }) => {
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate();
+
+  const handleDeleteFriend = async (friendId: number) => {
+    const confirmed = window.confirm("Are you sure you want to delete this friend? This action cannot be undone.");
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await axios.delete(`${BACKEND_URL}/friend/${userId}/${friendId}`);
+      console.log(`Friend ${friendId} deleted successfully.`);
+      onFriendDeleted(friendId);
+    } catch (error) {
+      console.error('Error deleting friend: ', error);
+      alert('Failed to delete friend. Please try again.');
+    }
+  }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 m-5 gap-4">
@@ -38,8 +58,7 @@ const FriendList: React.FC<FriendListProps> = ({ friends }) => {
               }}>
                 Edit
               </Button>
-              <Button variant="destructive" onClick={() => {
-              }}>
+              <Button variant="destructive" onClick={() => handleDeleteFriend(friend.id)}>
                 Delete
               </Button>
             </CardFooter>
