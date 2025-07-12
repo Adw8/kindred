@@ -16,7 +16,7 @@ async function startServer() {
 
 startServer();
 
-app.get('/api/friends/:userId', async (req: Request, res: Response) => {
+app.get('/api/friends/:userId', async (req: Request, res: Response): Promise<void> => {
   try {
     const friends = await getFriendsForUser(req.params.userId);
     res.json(friends);
@@ -26,7 +26,7 @@ app.get('/api/friends/:userId', async (req: Request, res: Response) => {
   }
 });
 
-app.post('/api/add-friend', async (req: Request, res: Response) => {
+app.post('/api/add-friend', async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId, name, birthday, info } = req.body;
 
@@ -43,7 +43,7 @@ app.post('/api/add-friend', async (req: Request, res: Response) => {
   }
 });
 
-app.get('/api/friend/:userId/:friendId', async (req: Request, res: Response) => {
+app.get('/api/friend/:userId/:friendId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { friendId, userId } = req.params;
     if (!friendId || !userId) {
@@ -57,49 +57,49 @@ app.get('/api/friend/:userId/:friendId', async (req: Request, res: Response) => 
   }
 })
 
-app.put('/api/friend/:userId/:friendId', async (req: Request, res: Response): Promise<any> => {
+app.put('/api/friend/:userId/:friendId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { friendId, userId } = req.params;
     const { info } = req.body;
 
     if (!friendId || !userId) {
-      return res.status(400).json({ error: 'FriendId and userId are required' });
+      res.status(400).json({ error: 'FriendId and userId are required' });
     }
 
     if (!info) {
-      return res.status(400).json({ error: 'Info field is required' });
+      res.status(400).json({ error: 'Info field is required' });
     }
 
     const updatedFriend = await updateFriendInfo(friendId, userId, info);
 
     if (!updatedFriend) {
-      return res.status(404).json({ error: 'Friend not found' });
+      res.status(404).json({ error: 'Friend not found' });
     }
 
-    return res.json(updatedFriend);
+    res.json(updatedFriend);
   } catch (error) {
     console.error('Error updating friend info:', error);
-    return res.status(500).json({ error: 'Failed to update friend info' });
+    res.status(500).json({ error: 'Failed to update friend info' });
   }
 });
 
-app.delete('/api/friend/:userId/:friendId', async (req: Request, res: Response): Promise<any> => {
+app.delete('/api/friend/:userId/:friendId', async (req: Request, res: Response): Promise<void> => {
   try {
     const { friendId, userId } = req.params;
 
     if (!friendId || !userId) {
-      return res.status(400).json({ error: 'FriendId and userId are required' });
+      res.status(400).json({ error: 'FriendId and userId are required' });
     }
 
     const deleted = await deleteFriend(friendId, userId);
 
     if (!deleted) {
-      return res.status(404).json({ error: 'Friend not found' });
+      res.status(404).json({ error: 'Friend not found' });
     }
 
-    return res.json({ message: 'Friend deleted successfully' });
+    res.json({ message: 'Friend deleted successfully' });
   } catch (error) {
     console.error('Error deleting friend:', error);
-    return res.status(500).json({ error: 'Failed to delete friend' });
+    res.status(500).json({ error: 'Failed to delete friend' });
   }
 });
