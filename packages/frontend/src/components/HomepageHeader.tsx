@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { NavLink, Outlet } from 'react-router-dom';
 import { ModeToggle } from "./modeToggle";
 
 const HomepageHeader = () => {
@@ -6,10 +6,12 @@ const HomepageHeader = () => {
     <>
       <div className="flex justify-between m-5">
         <div>
-          <h1 className="text-4xl font-semibold">
-            Kindred
-          </h1>
-          <p className="card mt-2">
+          <NavLink to="/" end>
+            <h1 className="text-4xl font-semibold">
+              Kindred
+            </h1>
+          </NavLink>
+          <p className="card mt-2 font-normal">
             Stay closer with your loved ones.
           </p>
         </div>

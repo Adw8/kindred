@@ -2,6 +2,8 @@ import dotenv from 'dotenv';
 import { Client } from 'pg';
 import assert from 'assert';
 
+import { Friend } from '../types';
+
 dotenv.config();
 
 assert(process.env.POSTGRES_USER, 'POSTGRES_USER is not set');
@@ -45,7 +47,8 @@ export const getFriendsForUser = async (userId: string) => {
 
   const query = `
     SELECT * FROM public.friends
-    WHERE user_id = $1;
+    WHERE user_id = $1
+    order by id asc;
   `;
   const values = [userId];
 
@@ -55,6 +58,71 @@ export const getFriendsForUser = async (userId: string) => {
   } catch (err) {
     console.error('Error fetching friends:', err);
     return [];
+  } finally {
+    await client.end();
+  }
+}
+
+export const getFriendDetails = async (friendId: string, userId: string): Promise<Friend | undefined> => {
+  const client = new Client(dbConfig);
+  await client.connect();
+
+  try {
+    const query = `
+      SELECT id, name, birthday, info, last_contacted_at
+      FROM public.friends
+      WHERE id = $1 and user_id = $2
+    `;
+
+    const res = await client.query(query, [friendId, userId])
+    return res.rows[0];
+
+  } catch (err) {
+    console.error('Error fetching friends: ', err);
+  }
+  finally {
+    await client.end();
+  }
+}
+
+export const updateFriendInfo = async (friendId: string, userId: string, info: string): Promise<Friend | undefined> => {
+  const client = new Client(dbConfig);
+  await client.connect();
+
+  try {
+    const query = `
+      UPDATE public.friends
+      SET info = $3
+      WHERE id = $1 AND user_id = $2
+      RETURNING *
+    `;
+
+    const res = await client.query(query, [friendId, userId, info]);
+    return res.rows[0];
+
+  } catch (err) {
+    console.error('Error updating friend info: ', err);
+  } finally {
+    await client.end();
+  }
+}
+
+export const deleteFriend = async (friendId: string, userId: string): Promise<boolean> => {
+  const client = new Client(dbConfig);
+  await client.connect();
+
+  try {
+    const query = `
+      DELETE FROM public.friends
+      WHERE id = $1 AND user_id = $2
+    `;
+
+    const res = await client.query(query, [friendId, userId]);
+    return (res.rowCount ?? 0) > 0; // Returns true if a row was deleted
+
+  } catch (err) {
+    console.error('Error deleting friend: ', err);
+    return false;
   } finally {
     await client.end();
   }

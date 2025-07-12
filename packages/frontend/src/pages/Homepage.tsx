@@ -44,6 +44,12 @@ const Homepage: React.FC<HomepageProps> = ({ userId }) => {
     });
   };
 
+  const handleFriendDeleted = (deletedFriendId: number) => {
+    setFriends((prevFriends) => {
+      return prevFriends.filter(friend => friend.id !== deletedFriendId);
+    });
+  };
+
   return (
     <>
       <div className='flex flex-col'>
@@ -51,7 +57,7 @@ const Homepage: React.FC<HomepageProps> = ({ userId }) => {
           <Button variant="outline" onClick={() => setOpenDialog(true)}>Add friend</Button>
         </div>
         <AddFriendDialog open={openDialog} onOpenChange={setOpenDialog} onAddFriend={addFriend} />
-        <FriendList friends={friends} />
+        <FriendList friends={friends} onFriendDeleted={handleFriendDeleted} userId={userId} />
       </div>
     </>
   )
